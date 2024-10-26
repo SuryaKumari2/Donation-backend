@@ -6,21 +6,26 @@ dotenv.config();
 
 // Sign up
 exports.signUp = async (req, res) => {
-    const { username, email, password,mobile } = req.body; // Destructure user data from the request body
+    const { username, email, password} = req.body; // Destructure user data from the request body
 
     try {
         // Check if the user already exists
+        
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'User already exists' }); // Respond with error if user exists
         }
+        
 
         // Hash the password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await User.create({ username, email, password: hashedPassword,mobile }); // Create new user
+        
+        const newUser = await User.create({ username, email, password: hashedPassword }); // Create new user
         res.status(201).json({ message: 'User created successfully', user: newUser }); // Respond with success
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: error.message }); // Handle server errors
+        
     }
 };
 
